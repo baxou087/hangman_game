@@ -1,15 +1,20 @@
 import json
 
 CHAR_LIST = ['A','B','C','D','E','F',
-                'G','H','I','J','K','L',
-                'M','N','O','P','Q','R',
-                'S','T','U','V','W','X',
-                'y','Z']
+             'G','H','I','J','K','L',
+             'M','N','O','P','Q','R',
+             'S','T','U','V','W','X',
+             'y','Z']
 
 class char_pool:
 
-    # will contain the char_pool A -> Z
-    _cp          = {}
+    # Will contain a dict containing the char_pool A -> Z
+    # Each char will be associated to a boolean.
+    # The boolean will be used to know if the letter
+    # will be shown to the player or not
+    _cp = {}
+
+
 
 
     '''
@@ -19,7 +24,7 @@ class char_pool:
     '''
     def __init__(self):
         for char in CHAR_LIST:
-            self._cp[char] = True
+            self._cp[char]  = True
 
 
 
