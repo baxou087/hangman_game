@@ -5,6 +5,8 @@ class word_pool:
 
     # list containing the word_pool
     _wp = []
+    # size of the word_pool
+    _sz = 0
     # String containing the path to the file containing the words to load
     _fp = ""
 
@@ -27,7 +29,9 @@ class word_pool:
     Returns: void
     '''
     def load_word_pool(self):
+        print("word_pool reloaded")
         self._wp = open(self._fp).read().splitlines()
+        self._sz = len(self._wp)
 
 
 
@@ -39,18 +43,41 @@ class word_pool:
     '''
     def get_word(self) -> str:
         word = ""
-        size = len(self._wp)
 
         # if the word_pool is exhausted, it is reloaded
-        if size == 0:
+        if self.is_empty():
             self.load_word_pool()
-            size = len(self._wp)
+            self._sz = len(self._wp)
 
         # getting a random word from the word pool
         # removing it from the list
-        rng  = random.randrange(0, size)
-        word = self._wp[rng]
+        rng         = random.randrange(0, self._sz)
+        word        = self._wp[rng]
+        self._sz   -= 1
         del self._wp[rng]
 
         return word
+
+
+
+
+    '''
+        Method used to test the word pool reloading
+
+        Returns : a boolean to know if the word_pool is empty
+    '''
+    def is_empty(self) -> bool:
+        return self._sz == 0
+
+
+
+
+    '''
+        Method used to test the word pool reloading
+    '''
+    def test_get_word(self):
+        for i in range(0, 10):
+            print(self.get_word())
+
+
 

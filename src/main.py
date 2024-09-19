@@ -6,12 +6,12 @@ FILE_PATH       = "../files/mots"
 FILE_PATH_TEST  = "../files/test"
 
 if __name__ == "__main__":
-#    pass
+    pass
 
 
 # word_pool testing
-    wp = word_pool(FILE_PATH_TEST)
-    wp.get_word()
+#    wp = word_pool(FILE_PATH_TEST)
+#    wp.test_get_word()
 
 
 # char_pool testing
