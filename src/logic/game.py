@@ -4,7 +4,11 @@ from logic.letter_pool            import *
 
 STARTING_POINTS = 3
 MAX_CURRENCY    = 4
-QUIT_INPUT      = "QQ"
+QUIT_GAME       = "QQ"
+SPACE           = " "
+DASH            = "-"
+NO_CHAR         = ""
+MASKED_LETTER   = "_ "
 
 
 class game:
@@ -57,7 +61,7 @@ class game:
     def run(self):
         # We get the new word the player must find
         self._word              = self._wp.get_word()
-        word_length             = len(self._word.replace("-", ""))
+        word_length             = len(self._word.replace(DASH, NO_CHAR))
         nb_characters_found     = 0
 
         # Main loop of the game
@@ -70,10 +74,11 @@ class game:
             letter  = ""
             l_pool  = self._lp.get_letter_pool()
             while letter not in l_pool:
-                letter = input("What letter do you wish to buy (input QQ to quit the game) ? ")
+                letter = input(f"What letter do you wish to buy (input {QUIT_GAME} to quit the game) ? ")
                 letter = letter.upper()
 
-                if letter == "QQ":
+                # Checking if the players wants to quit the game
+                if letter == QUIT_GAME:
                     exit()
 
             # We add the letter input from the player in the set of letters
@@ -91,6 +96,7 @@ class game:
                 print("\n----------------------------------------------")
                 print(f"Well done! The word was \"{self._word}\"")
                 print("----------------------------------------------\n")
+
                 # Updating the player's score
                 self.update_score()
 
@@ -121,10 +127,10 @@ class game:
     def display_game(self):
         letters_to_display  = ""
         for char in self._word:
-            if char in self._lt or char == "-":
-                letters_to_display += char + " "
+            if char in self._lt or char == DASH:
+                letters_to_display += char + SPACE
             else:
-                letters_to_display += "_ "
+                letters_to_display += MASKED_LETTER
 
         print(f"words found    = {self._score}")
         print(f"currency       = {self._currency} / {MAX_CURRENCY}")
