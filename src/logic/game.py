@@ -4,14 +4,21 @@ from logic.letter_pool            import *
 import os
 
 
-STARTING_POINTS = 4
-MAX_CURRENCY    = 20
+STARTING_POINTS     = 4
 
-QUIT_GAME       = "QQ"
-SPACE           = " "
-DASH            = "-"
-NO_CHAR         = ""
-MASKED_LETTER   = "_ "
+FIRST_TIER          = 10
+SECOND_TIER         = 15
+MAX_CURRENCY        = 20
+
+FIRST_TIER_VALUE    = 1
+SECOND_TIER_VALUE   = 2
+THIRD_TIER_VALUE    = 3
+
+QUIT_GAME           = "QQ"
+SPACE               = " "
+DASH                = "-"
+NO_CHAR             = ""
+MASKED_LETTER       = "_ "
 
 
 class game:
@@ -132,7 +139,7 @@ class game:
 
 
     '''
-        Method used to display the state of game
+        Method used to display the game
 
         Parameter:  None
         Returns:    None
@@ -140,10 +147,8 @@ class game:
     def display_game(self):
         letters_to_display  = ""
         for char in self._word:
-            if char in self._lt or char == DASH:
-                letters_to_display += char + SPACE
-            else:
-                letters_to_display += MASKED_LETTER
+            char_bool = char in self._lt or char == DASH
+            letters_to_display += char + SPACE if char_bool else MASKED_LETTER
 
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -233,15 +238,30 @@ class game:
         Method used for updating the player's currency.
         The currency is both the player's score and the ressource
         the player uses to buy letters from the game.
-        He loses one currency if the letter he bought doesn't
-        exist in the word to find. Otherwise the player gets 1 point.
+
+        The player gains one currency for any letter he finds, without
+        taking into account how many times the letter appears in the word.
+
+        The player loses points if the letter he is buying isn't in the word to find.
+        The number of currency the player loses depends on the currency they already have :
+           - on the first tier (currency <= 10), he loses 1 point
+           - on the second tier (currency <= 15, he loses 2 points
+           - else (currency > 15), he loses 3 points
+
 
         Parameter:  int
         Returns:    None
     '''
     def update_currency(self, points: int):
-        pt = -1 if points == 0 else 1
-        self._currency += pt
+        if points > 0:
+            self._currency += 1
+        else:
+            if self._currency <= FIRST_TIER:
+                self._currency -= FIRST_TIER_VALUE
+            elif self._currency <= SECOND_TIER:
+                self._currency -= SECOND_TIER_VALUE
+            else:
+                self._currency -= THIRD_TIER_VALUE
 
 
 
