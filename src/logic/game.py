@@ -4,8 +4,9 @@ from logic.letter_pool            import *
 import os
 
 
-STARTING_POINTS = 3
-MAX_CURRENCY    = 4
+STARTING_POINTS = 4
+MAX_CURRENCY    = 20
+
 QUIT_GAME       = "QQ"
 SPACE           = " "
 DASH            = "-"
@@ -33,8 +34,11 @@ class game:
     _currency       = 0
 
     # Will contain the number of words found by the player
-    _score          = 0
+    _found          = 0
 
+    # Will contain the player's score.
+    # The lesser mistakes the player makes, the higher the score
+    _score          = 0
 
 
 
@@ -49,7 +53,7 @@ class game:
         self._lp        = letter_pool()
         self._lt        = set()
         self._currency  = STARTING_POINTS
-        self._score     = 0
+        self._found     = 0
 
 
 
@@ -67,7 +71,7 @@ class game:
         nb_characters_found     = 0
 
         # Main loop of the game
-        while not self.game_over():
+        while not self.game_lost():
 
             #Displaying the current state of the game
             self.display_game()
@@ -96,10 +100,15 @@ class game:
             # Checking if the word has been found
             if word_length == nb_characters_found:
                 print(f"\nWell done! The word was \"{self._word}\"")
-                input("Press enter to get the next word")
+                input("\nPress enter to get the next word")
 
-                # Updating the player's score
-                self.update_score()
+                # Updating the number of words found
+                self.update_found()
+
+                # If the game is won we break the loop
+                if self.game_won():
+                    print("\nCongratulation ! You have won !")
+                    break
 
                 # Resetting the bought letters set
                 self.reset_letter_pool()
@@ -112,10 +121,11 @@ class game:
                 nb_characters_found   = 0
 
 
-        print("\nGame Over !")
-        print(f"The word you were looking for was : \"{self._word}\"")
-        print(f"You found a total of {self._score} words !\n")
-        exit()
+        if self.game_lost():
+            print("\nGame Over !")
+            print(f"The word you were looking for was : \"{self._word}\"")
+            print(f"You found a total of {self._found} words !\n")
+            print(f"You got a score of {self._currency}/{MAX_CURRENCY} !\n")
 
 
 
@@ -136,11 +146,14 @@ class game:
 
         os.system('cls' if os.name == 'nt' else 'clear')
 
-        print(f"Words found    = {self._score}")
-        print(f"Currency       = {self._currency} / {MAX_CURRENCY}")
+        print(f"Words found    = {self._found}")
+        print(f"Currency       = {self._currency} / {MAX_CURRENCY} (Win the game by getting {MAX_CURRENCY} or more)")
         print(f"\nWord_to_find : {letters_to_display}")
         #print(f"word : {self._word}")
-        print(f"\nLetters tried : {self._lt}")
+
+        lt = self._lt if len(self._lt) > 0 else "{}"
+        print(f"\nLetters tried : {lt}")
+
         print(f"Letters left  : {self._lp.get_letter_pool()}")
 
 
@@ -154,14 +167,55 @@ class game:
         Returns:    bool
     '''
     def game_over(self) -> bool:
-        return self._currency < 0
+        return self.game_lost() or self.game_won()
 
 
 
 
     '''
-        Method used for updating the player's score.
-        The score is the number number of words found by the player
+        Method used for knowing if the game is won
+        The game is considered as won if the player's has
+        max currency or more
+
+        Parameter:  None
+        Returns:    bool
+    '''
+    def game_won(self) -> bool:
+        return self._currency >= MAX_CURRENCY
+
+
+
+
+    '''
+        Method used for knowing if the game is lost
+        The game is considered as lost when the player gets
+        to zero currency or less
+
+        Parameter:  None
+        Returns:    bool
+    '''
+    def game_lost(self) -> bool:
+        return self._currency <= 0
+
+
+
+
+    '''
+        Method used for updating the number of words the player has found.
+        Since the player tries to find only one word at a time,
+        we only increment it by one when the player finds a word
+
+        Parameter:  None
+        Returns:    None
+    '''
+    def update_found(self):
+        self._found += 1
+
+
+
+
+    '''
+        Method used for updating the number of words the player has found.
         Since the player tries to find only one word at a time,
         we only increment it by one when the player finds a word
 
@@ -169,36 +223,24 @@ class game:
         Returns:    None
     '''
     def update_score(self):
-        self._score += 1
+        self._score += self._currency
 
 
 
 
     '''
         Method used for updating the player's currency.
-        The currency is the ressource used by the player to buy letters
-        from the game. He loses one currency if the letter he bought doesn't
-        exist in the word to find. Otherwise they get a number of points
-        equal to the number of occurrences the bought letter appears.
-
-        Said otherwise if the player choses the letter 'E' and it appears 3
-        times in the word, then the player gets 3 points of currency.
-        But if the letter 'W' doesn't appear in the word, then the player loses
-        one currency
-
-        In order to not make the game too easy, the player cannot get more than
-        a maximum currency
+        The currency is both the player's score and the ressource
+        the player uses to buy letters from the game.
+        He loses one currency if the letter he bought doesn't
+        exist in the word to find. Otherwise the player gets 1 point.
 
         Parameter:  int
         Returns:    None
     '''
     def update_currency(self, points: int):
-        if points == 0:
-            self._currency -= 1
-        else:
-            self._currency += points
-            if self._currency > MAX_CURRENCY:
-                self._currency = MAX_CURRENCY
+        pt = -1 if points == 0 else 1
+        self._currency += pt
 
 
 
