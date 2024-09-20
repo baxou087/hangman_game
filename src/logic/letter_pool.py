@@ -4,7 +4,7 @@ CHAR_LIST = ['A','B','C','D','E','F',
              'G','H','I','J','K','L',
              'M','N','O','P','Q','R',
              'S','T','U','V','W','X',
-             'y','Z']
+             'Y','Z']
 
 class letter_pool:
 
@@ -12,7 +12,7 @@ class letter_pool:
     # Each letter will be associated to a boolean.
     # The boolean will be used to know if the letter
     # will be shown to the player or not
-    _lp = {}
+    _lp             = None
 
 
 
@@ -24,21 +24,20 @@ class letter_pool:
         Returns:    None
     '''
     def __init__(self):
-        for letter in CHAR_LIST:
-            self._lp[letter]  = True
+        self._lp = CHAR_LIST.copy()
 
 
 
 
     '''
-        Method used to make a letter visible to the player
+        Method used to get the letters the player can buy
+        We do not return the letters the players has already bought
 
-        Parameter:  str
+        Parameter:  None
         Returns:    None
     '''
-    def enable_letter(self, letter):
-        if letter in CHAR_LIST:
-            self._lp[letter] = True
+    def get_letter_pool(self):
+        return self._lp
 
 
 
@@ -50,8 +49,7 @@ class letter_pool:
         Returns:    None
     '''
     def disable_letter(self, letter):
-        if letter in CHAR_LIST:
-            self._lp[letter] = False
+        self._lp.remove(letter)
 
 
 
@@ -63,7 +61,7 @@ class letter_pool:
         Returns:    bool
     '''
     def is_visible(self, letter: str) -> bool:
-        return self._lp[letter]
+        return letter in self._lp
 
 
 

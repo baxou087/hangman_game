@@ -1,25 +1,33 @@
-from word_pool              import *
-from letter_pool            import *
+from logic.word_pool              import *
+from logic.letter_pool            import *
+
+
+STARTING_POINTS = 3
+MAX_CURRENCY    = 4
+QUIT_INPUT      = "QQ"
 
 
 class game:
 
     # Will contain the word_pool
-    _wp     = None
+    _wp             = None
 
     # Will contain the letter_pool
-    _lp     = None
+    _lp             = None
+
+    # Will contain the letters tried by the player
+    _lt             = None
 
     # Will contain the word to find
-    _word   = ""
+    _word           = ""
 
     # Will contain the number of points available to the player.
     # The players needs points to be able to buy letters from the game.
     # If the number of points falls to 0, the game is over.
-    _currency = 0
+    _currency       = 0
 
     # Will contain the number of words found by the player
-    _score  = 0
+    _score          = 0
 
 
 
@@ -33,8 +41,96 @@ class game:
     def __init__(self, file_path) -> None:
         self._wp        = word_pool(file_path)
         self._lp        = letter_pool()
-        self._currency  = 0
+        self._lt        = set()
+        self._currency  = STARTING_POINTS
         self._score     = 0
+
+
+
+
+    '''
+        Method running the game
+
+        Parameter:  None
+        Returns:    None
+    '''
+    def run(self):
+        # We get the new word the player must find
+        self._word              = self._wp.get_word()
+        word_length             = len(self._word.replace("-", ""))
+        nb_characters_found     = 0
+
+        # Main loop of the game
+        while not self.game_over():
+
+            #Displayng the current state of the game
+            self.display_game()
+
+            # Asking the player the letter they want to buy
+            letter  = ""
+            l_pool  = self._lp.get_letter_pool()
+            while letter not in l_pool:
+                letter = input("What letter do you wish to buy (input QQ to quit the game) ? ")
+                letter = letter.upper()
+
+                if letter == "QQ":
+                    exit()
+
+            # We add the letter input from the player in the set of letters
+            # bought by the player and we disable said letter
+            self._lt.add(letter)
+            self._lp.disable_letter(letter)
+
+            # Checking if the letter is in the word to find
+            points                  = self.nb_times_letter_in_word(letter)
+            nb_characters_found    += points
+            self.update_currency(points)
+
+            # Checking if the word has been found
+            if word_length == nb_characters_found:
+                print("\n----------------------------------------------")
+                print(f"Well done! The word was \"{self._word}\"")
+                print("----------------------------------------------\n")
+                # Updating the player's score
+                self.update_score()
+
+                # Resetting the bought letters set
+                self.reset_letter_pool()
+
+                # Getting a new word and its length
+                self._word  = self._wp.get_word()
+                word_length = len(self._word)
+
+                # resetting the number of characters found
+                nb_characters_found   = 0
+
+
+        print("\nGame Over !")
+        print(f"You found a total of {self._score} words !\n")
+        exit()
+
+
+
+
+    '''
+        Method used to display the state of game
+
+        Parameter:  None
+        Returns:    None
+    '''
+    def display_game(self):
+        letters_to_display  = ""
+        for char in self._word:
+            if char in self._lt or char == "-":
+                letters_to_display += char + " "
+            else:
+                letters_to_display += "_ "
+
+        print(f"words found    = {self._score}")
+        print(f"currency       = {self._currency} / {MAX_CURRENCY}")
+        print(f"word_to_find : {letters_to_display}")
+        print(f"word : {self._word}")
+        print(f"letters left : {self._lp.get_letter_pool()}")
 
 
 
@@ -79,31 +175,45 @@ class game:
         But if the letter 'W' doesn't appear in the word, then the player loses
         one currency
 
+        In order to not make the game too easy, the player cannot get more than
+        a maximum currency
+
         Parameter:  int
         Returns:    None
     '''
     def update_currency(self, points: int):
-        self._currency += points
+        if points == 0:
+            self._currency -= 1
+        else:
+            self._currency += points
+            if self._currency > MAX_CURRENCY:
+                self._currency = MAX_CURRENCY
 
 
 
 
     '''
-        Method used to check if the letter bought by the player is in the word.
-        The method will return a set with all the indexes where the bought letter appears.
+        Method that returns the number of times the letter is in the word
 
         parameter:  str
-        Returns:    set
+        Returns:    int
     '''
-    def is_letter_in_word(self, letter: str) -> set:
-        res = set()
+    def nb_times_letter_in_word(self, letter: str) -> int:
+        return self._word.count(letter)
 
-        for i, char in enumerate(self._word):
-            if letter == char:
-                res.add(i)
 
-        return res
 
+
+    '''
+        Method used to reset the letter_pool and the pool of letters tried
+        used when the player has found the word.
+
+        parameter:  None
+        Returns:    None
+    '''
+    def reset_letter_pool(self):
+        self._lp = letter_pool()
+        self._lt = set()
 
 
 
