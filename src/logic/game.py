@@ -67,7 +67,7 @@ class game:
         # Main loop of the game
         while not self.game_over():
 
-            #Displayng the current state of the game
+            #Displaying the current state of the game
             self.display_game()
 
             # Asking the player the letter they want to buy
