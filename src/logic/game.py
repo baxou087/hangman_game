@@ -99,7 +99,8 @@ class game:
 
             # Checking if the word has been found
             if word_length == nb_characters_found:
-                print(f"\nWell done! The word was \"{self._word}\"")
+                self.display_game()
+                print(f"\nWell done!")
                 input("\nPress enter to get the next word")
 
                 # Updating the number of words found
@@ -151,7 +152,7 @@ class game:
         print(f"\nWord_to_find : {letters_to_display}")
         #print(f"word : {self._word}")
 
-        lt = self._lt if len(self._lt) > 0 else "{}"
+        lt = sorted(self._lt) if len(self._lt) > 0 else "{}"
         print(f"\nLetters tried : {lt}")
 
         print(f"Letters left  : {self._lp.get_letter_pool()}")
