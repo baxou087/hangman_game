@@ -20,7 +20,8 @@ class letter_pool:
     '''
         letter_pool constructor
 
-        returns : void
+        Parameter:  str
+        Returns:    None
     '''
     def __init__(self):
         for letter in CHAR_LIST:
@@ -32,7 +33,8 @@ class letter_pool:
     '''
         Method used to make a letter visible to the player
 
-        returns : void
+        Parameter:  str
+        Returns:    None
     '''
     def enable_letter(self, letter):
         if letter in CHAR_LIST:
@@ -44,7 +46,8 @@ class letter_pool:
     '''
         Method used to make a letter non visible to the player
 
-        returns : void
+        Parameter:  str
+        Returns:    None
     '''
     def disable_letter(self, letter):
         if letter in CHAR_LIST:
@@ -56,9 +59,10 @@ class letter_pool:
     '''
         Method used to know if the letter is visible or not to the player
 
-        returns : bool
+        Parameter:  str
+        Returns:    bool
     '''
-    def is_visible(self, letter):
+    def is_visible(self, letter: str) -> bool:
         return self._lp[letter]
 
 
@@ -67,7 +71,8 @@ class letter_pool:
     '''
         Method to print the letter pool to the terminal
 
-        returns : void
+        Parameter:  None
+        Returns:    None
     '''
     def to_string(self):
         print(json.dumps(self._lp, indent=4))

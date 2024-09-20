@@ -12,9 +12,10 @@ class word_pool:
 
 
     '''
-    Constructor
+        Constructor
 
-    Returns: void
+        Parameter:  None
+        Returns:    bool
     '''
     def __init__(self, file_path):
         self._fp = file_path
@@ -26,7 +27,8 @@ class word_pool:
     '''
     Method used to load the word_pool
 
-    Returns: void
+        Parameter:  None
+        Returns:    None
     '''
     def load_word_pool(self):
         print("word_pool reloaded")
@@ -39,7 +41,8 @@ class word_pool:
     '''
     Method used return a random word from the word_pool
 
-    Returns: String
+        Parameter:  None
+        Returns:    str
     '''
     def get_word(self) -> str:
         word = ""
@@ -62,9 +65,10 @@ class word_pool:
 
 
     '''
-        Method used to test the word pool reloading
+        Method used to know if the word_pool has been exhausted
 
-        Returns : a boolean to know if the word_pool is empty
+        Parameter:  None
+        Returns:    bool
     '''
     def is_empty(self) -> bool:
         return self._sz == 0
@@ -74,6 +78,9 @@ class word_pool:
 
     '''
         Method used to test the word pool reloading
+
+        Parameter:  None
+        Returns:    None
     '''
     def test_get_word(self):
         for i in range(0, 10):
