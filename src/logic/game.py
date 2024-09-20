@@ -1,6 +1,8 @@
 from logic.word_pool              import *
 from logic.letter_pool            import *
 
+import os
+
 
 STARTING_POINTS = 3
 MAX_CURRENCY    = 4
@@ -74,7 +76,7 @@ class game:
             letter  = ""
             l_pool  = self._lp.get_letter_pool()
             while letter not in l_pool:
-                letter = input(f"What letter do you wish to buy (input {QUIT_GAME} to quit the game) ? ")
+                letter = input(f"--\nWhat letter do you wish to buy (input {QUIT_GAME} to quit the game) ? ")
                 letter = letter.upper()
 
                 # Checking if the players wants to quit the game
@@ -93,9 +95,8 @@ class game:
 
             # Checking if the word has been found
             if word_length == nb_characters_found:
-                print("\n----------------------------------------------")
-                print(f"Well done! The word was \"{self._word}\"")
-                print("----------------------------------------------\n")
+                print(f"\nWell done! The word was \"{self._word}\"")
+                input("Press enter to get the next word")
 
                 # Updating the player's score
                 self.update_score()
@@ -112,6 +113,7 @@ class game:
 
 
         print("\nGame Over !")
+        print(f"The word you were looking for was : \"{self._word}\"")
         print(f"You found a total of {self._score} words !\n")
         exit()
 
@@ -132,11 +134,13 @@ class game:
             else:
                 letters_to_display += MASKED_LETTER
 
-        print(f"words found    = {self._score}")
-        print(f"currency       = {self._currency} / {MAX_CURRENCY}")
-        print(f"word_to_find : {letters_to_display}")
+        os.system('cls' if os.name == 'nt' else 'clear')
+
+        print(f"Words found    = {self._score}")
+        print(f"Currency       = {self._currency} / {MAX_CURRENCY}")
+        print(f"\nWord_to_find : {letters_to_display}")
         #print(f"word : {self._word}")
-        print(f"letters left : {self._lp.get_letter_pool()}")
+        print(f"\nLetters left : {self._lp.get_letter_pool()}")
 
 
 
