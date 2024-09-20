@@ -129,7 +129,7 @@ class game:
         print(f"words found    = {self._score}")
         print(f"currency       = {self._currency} / {MAX_CURRENCY}")
         print(f"word_to_find : {letters_to_display}")
-        print(f"word : {self._word}")
+        #print(f"word : {self._word}")
         print(f"letters left : {self._lp.get_letter_pool()}")
 
 
