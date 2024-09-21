@@ -1,5 +1,5 @@
-from logic.word_pool              import *
-from logic.letter_pool            import *
+from word_pool              import *
+from letter_pool            import *
 
 import os
 
