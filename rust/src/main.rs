@@ -9,6 +9,6 @@ const FILEPATH: &str = "../files/mots";
 
 
 fn main() {
-    let game: Game = Game::new(FILEPATH.to_string());
-    game.display_game();
+    let mut game: Game = Game::new(FILEPATH.to_string());
+    game.run();
 }

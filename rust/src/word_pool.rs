@@ -79,7 +79,6 @@ impl WordPool {
 
         let mut rng = rand::thread_rng();
         let n: u32 = rng.gen_range(0..self.size as u32);
-        println!("{}", n);
 
         self.size -= 1;
 
