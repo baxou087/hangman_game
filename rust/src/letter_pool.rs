@@ -5,9 +5,10 @@ const CHAR_POOL: [char; NB_LETTERS_IN_ALPHABET] = ['A','B','C','D','E','F',
                                                    'S','T','U','V','W','X',
                                                    'Y','Z'];
 
-/// The LetterPool structure will help us keep track of what
-/// letters have been bought, and what letters are still available
-pub struct LetterPool {
+    /// The LetterPool structure will help us keep track of what
+    /// letters have been bought, and what letters are still available
+    /// for the player to buy
+    pub struct LetterPool {
     available:  Vec<char>,
     bought:     Vec<char>
 }
@@ -53,6 +54,7 @@ impl LetterPool {
     /// This method won't check if the letter passed as an argument is a valid.
     /// The calling function will have to make sure the letter is valid.
     /// 
+    /// # Example
     /// ```
     ///    let lp: LetterPool = LetterPool::new();
     ///
@@ -71,8 +73,15 @@ impl LetterPool {
     /// This method won't check if the letter passed as an argument is a valid.
     /// The calling function will have to make sure the letter is valid.
     /// 
+    /// # Example
     /// ```
-    /// 
+    ///    let mut lp: LetterPool = LetterPool::new();
+    ///
+    ///    assert_eq!(lp.is_letter_available('A'), true);
+    ///    lp.buy_letter('A');
+    ///    assert_eq!(lp.is_letter_available('A'), false);
+    ///
+    ///    assert_eq!(lp.bought.contains(&'A'), true);
     /// ```
     pub fn buy_letter(self: &mut Self, letter: char) {
         if self.is_letter_available(letter) {
