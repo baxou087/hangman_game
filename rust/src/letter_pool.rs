@@ -9,8 +9,8 @@ const CHAR_POOL: [char; NB_LETTERS_IN_ALPHABET] = ['A','B','C','D','E','F',
     /// letters have been bought, and what letters are still available
     /// for the player to buy
     pub struct LetterPool {
-    available:  Vec<char>,
-    bought:     Vec<char>
+        available:  Vec<char>,
+        bought:     Vec<char>
 }
 
 
@@ -92,6 +92,17 @@ impl LetterPool {
             println!("The letter {letter} has already been bought !");
         }
     }
+
+    /// Returns a copy of the letters the player can buy
+    pub fn available(self: &Self) -> Vec<char> {
+        self.available.clone()
+    }
+
+    /// Returns a copy of the letters the player has bought
+    pub fn bought(self: &Self) -> Vec<char> {
+        self.bought.clone()
+    }
+
 
 }
 
