@@ -83,13 +83,14 @@ impl LetterPool {
     ///
     ///    assert_eq!(lp.bought.contains(&'A'), true);
     /// ```
-    pub fn buy_letter(self: &mut Self, letter: char) {
+    pub fn buy_letter(self: &mut Self, letter: char) -> bool {
         if self.is_letter_available(letter) {
             let index = self.available.iter().position(|&r| r == letter).unwrap();
             self.bought.push(letter);
-            self.available.swap_remove(index);
+            self.available.remove(index);
+            true
         } else {
-            println!("The letter {letter} has already been bought !");
+            false
         }
     }
 
