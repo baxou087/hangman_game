@@ -26,10 +26,15 @@ impl Game {
         }
     }
 
-
+    /// Main loop of the game
     pub fn run(self: &mut Self) {
-        self.word = self.wp.get_word();
-        self.display_game();
+        loop {
+            self.word = self.wp.get_word();
+            self.display_game();
+
+            let input = self.ask_for_user_input();
+            if input == "QQ" { break; }
+        }
     }
 
 
@@ -42,39 +47,8 @@ impl Game {
         println!("Word to find  : {}", self.display_word());
         println!("Word to find  : {}", self.word);
         println!("");
-        println!("Bought        : {}", Game::display_letter_pool(self.lp.bought()));
-        println!("Available     : {}", Game::display_letter_pool(self.lp.available()));
-    }
-
-
-    /// Displays the letter pool that has been passed as an argument
-    /// 
-    /// If the letter_pool is empty, the method returns "[]"
-    /// 
-    /// If the letter_pool contains A, B and C, it return "[ A ; B ; C ]"
-    /// 
-    /// # Example
-    /// ```
-    ///    let v1: Vec<char> = Vec::new();
-    ///    assert_eq!(Game::display_letter_pool(v1), "[]");
-    ///    let v2: Vec<char> = vec!['A', 'B', 'C'];
-    ///    assert_eq!(Game::display_letter_pool(v2), "[ A ; B ; C ]");
-    /// ```
-    pub fn display_letter_pool(lp: Vec<char>) -> String {
-        if lp.len() == 0 {
-            String::from("[]")
-        } else {
-            let sz = lp.len() - 1;
-
-            let mut s: String = String::from("[ ");
-            for (i, c) in lp.iter().enumerate() {
-                s.push_str(&c.to_string());
-                if i != sz {s.push_str(" ; ");}
-            }
-            s.push_str(" ]");
-
-            s
-        }
+        println!("Bought        : {}", LetterPool::display_letter_pool(self.lp.bought()));
+        println!("Available     : {}", LetterPool::display_letter_pool(self.lp.available()));
     }
 
 
@@ -85,7 +59,7 @@ impl Game {
     /// 
     pub fn display_word(self: &Self) -> String {
         let mut s: String = String::from("");
-        let bought: Vec<char> = self.lp.bought();
+        let bought: &Vec<char> = self.lp.bought();
         for c in self.word.chars() {
             if c == '-' {
                 s.push_str(&String::from(" - "));
@@ -101,20 +75,45 @@ impl Game {
     }
 
 
+    /// Asks the player to either buy a letter (A to Z) or input "QQ" to quit the game
+    ///
+    /// If the player inputs anything else, then the game will loop until a valid
+    /// input is passed
+    pub fn ask_for_user_input(&self) -> String {
+        use text_io::read;
 
+        let mut input: String;
 
-}
+        loop {
+            print!("What letter do you wish to buy (input QQ to quit the game) ? ");
+            input = read!();
+            input = input.to_uppercase();
 
+            // quitting the game
+            if input == "QQ" {
+                break;
+            }
 
-#[cfg(test)]
-mod tests {
-use crate::game::Game;
+            // valid input from the player
+            let valid_input: bool = input.len() == 1 &&
+                            (input.chars().nth(0).unwrap() >= 'A' &&
+                             input.chars().nth(0).unwrap() <= 'Z');
 
-    #[test]
-    fn test_display_letter_pool() {
-        let v1: Vec<char> = Vec::new();
-        assert_eq!(Game::display_letter_pool(v1), "[]");
-        let v2: Vec<char> = vec!['A', 'B', 'C'];
-        assert_eq!(Game::display_letter_pool(v2), "[ A ; B ; C ]");
+            if valid_input {
+                break;
+            }
+        }
+
+        input
     }
+
+
+
 }
+
+
+//#[cfg(test)]
+//mod tests {
+//use crate::game::Game;
+//
+//}
