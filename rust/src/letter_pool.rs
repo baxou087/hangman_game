@@ -93,14 +93,45 @@ impl LetterPool {
         }
     }
 
-    /// Returns a copy of the letters the player can buy
-    pub fn available(self: &Self) -> Vec<char> {
-        self.available.clone()
+    /// Borrows the available vector to the caller
+    pub fn available(self: &Self) -> &Vec<char> {
+        &self.available
     }
 
-    /// Returns a copy of the letters the player has bought
-    pub fn bought(self: &Self) -> Vec<char> {
-        self.bought.clone()
+    /// Borrows the bought vector to the caller
+    pub fn bought(self: &Self) -> &Vec<char> {
+        &self.bought
+    }
+
+
+    /// Displays the letter pool that has been passed as an argument
+    /// 
+    /// If the letter_pool is empty, the method returns "[]"
+    /// 
+    /// If the letter_pool contains A, B and C, it return "[ A ; B ; C ]"
+    /// 
+    /// # Example
+    /// ```
+    ///    let v1: Vec<char> = Vec::new();
+    ///    assert_eq!(Game::display_letter_pool(v1), "[]");
+    ///    let v2: Vec<char> = vec!['A', 'B', 'C'];
+    ///    assert_eq!(Game::display_letter_pool(v2), "[ A ; B ; C ]");
+    /// ```
+    pub fn display_letter_pool(lp: &Vec<char>) -> String {
+        if lp.len() == 0 {
+            String::from("[]")
+        } else {
+            let sz = lp.len() - 1;
+
+            let mut s: String = String::from("[ ");
+            for (i, c) in lp.iter().enumerate() {
+                s.push_str(&c.to_string());
+                if i != sz {s.push_str(" ; ");}
+            }
+            s.push_str(" ]");
+
+            s
+        }
     }
 
 
@@ -144,6 +175,14 @@ mod tests {
         assert_eq!(lp.bought.contains(&'A'), true);
     }
 
+
+    #[test]
+    fn test_display_letter_pool() {
+        let v1: Vec<char> = Vec::new();
+        assert_eq!(LetterPool::display_letter_pool(&v1), "[]");
+        let v2: Vec<char> = vec!['A', 'B', 'C'];
+        assert_eq!(LetterPool::display_letter_pool(&v2), "[ A ; B ; C ]");
+    }
 
 
 }
