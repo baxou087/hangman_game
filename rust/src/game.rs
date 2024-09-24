@@ -1,8 +1,9 @@
 use crate::{letter_pool::LetterPool, word_pool::WordPool};
 
-const STARTING_CURRENCY:    u32 = 4;
-const MAX_CURRENCY:         u32 = 20;
+const STARTING_CURRENCY:    u32  = 4;
+const MAX_CURRENCY:         u32  = 20;
 
+const QUIT_GAME:            &str = "QQ";
 
 pub struct Game {
     word:       String,
@@ -28,19 +29,43 @@ impl Game {
 
     /// Main loop of the game
     pub fn run(self: &mut Self) {
-        loop {
-            self.word = self.wp.get_word();
+
+        self.word = self.wp.get_word();
+
+        'main_loop: loop {
             self.display_game();
 
-            let input = self.ask_for_user_input();
-            if input == "QQ" { break; }
+            // ask the player to input a letter and check if the letter has been bought.
+            // if not loop until the player enters a letter that can be bought
+            loop {
+                // checking if the letter has been found
+                if self.has_been_found() {
+                    break 'main_loop;
+                }
+
+                // asking the player what letter they want to buy
+                let input = self.ask_for_user_input();
+
+                // checking if the player wants to quit the game
+                if input == QUIT_GAME { break 'main_loop; }
+
+                // checking if the letter is available
+                let letter: char = input.chars().nth(0).unwrap();
+                if self.lp.is_letter_available(letter) {
+                    self.lp.buy_letter(letter);
+                    break;
+                }
+            }
+
+
+
         }
     }
 
 
     ///Displays the game to the player
     pub fn display_game(self: &Self) {
-        print!("{esc}[2J{esc}[1;1H", esc = 27 as char); 
+        // print!("{esc}[2J{esc}[1;1H", esc = 27 as char); 
         println!("Words found   : {}", self.found);
         println!("Currency      : {} / {} (Win the game by getting 20 or more)", self.currency, MAX_CURRENCY);
         println!("");
@@ -105,6 +130,18 @@ impl Game {
         }
 
         input
+    }
+
+
+
+    /// Checks if the word has been found by the player
+    pub fn has_been_found(&self) -> bool {
+        let bought_letters = self.lp.bought();
+
+        // we remove the '-' char before checking the word has been found
+        let wrd = self.word.replace("-", "");
+
+        wrd.chars().all(|c| bought_letters.contains(&c))
     }
 
 
