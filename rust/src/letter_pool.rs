@@ -83,15 +83,10 @@ impl LetterPool {
     ///
     ///    assert_eq!(lp.bought.contains(&'A'), true);
     /// ```
-    pub fn buy_letter(self: &mut Self, letter: char) -> bool {
-        if self.is_letter_available(letter) {
-            let index = self.available.iter().position(|&r| r == letter).unwrap();
-            self.bought.push(letter);
-            self.available.remove(index);
-            true
-        } else {
-            false
-        }
+    pub fn buy_letter(self: &mut Self, letter: char) {
+        let index = self.available.iter().position(|&r| r == letter).unwrap();
+        self.bought.push(letter);
+        self.available.remove(index);
     }
 
     /// Borrows the available vector to the caller
