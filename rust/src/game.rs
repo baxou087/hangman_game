@@ -163,9 +163,9 @@ impl Game {
             }
 
             // valid input condition
-            let valid_input: bool = input.len() == 1 &&
-                            (input.chars().nth(0).unwrap() >= 'A' &&
-                             input.chars().nth(0).unwrap() <= 'Z');
+            let letter = input.chars().nth(0).unwrap();
+            let valid_input: bool = input.len() == 1 && letter >= 'A'
+                                                     && letter <= 'Z';
 
             if valid_input {
                 break;
