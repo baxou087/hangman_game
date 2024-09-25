@@ -5,10 +5,9 @@ mod game;
 
 use crate::game::Game;
 
-const FILEPATH: &str = "../files/mots";
 
 
 fn main() {
-    let mut game: Game = Game::new(FILEPATH.to_string());
+    let mut game: Game = Game::new();
     game.run();
 }

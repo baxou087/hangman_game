@@ -17,11 +17,11 @@ pub struct Game {
 impl Game {
 
     /// Constructor for the main structure of the game
-    pub fn new(filepath: String) -> Game {
+    pub fn new() -> Game {
         Game {
             word:       String::new(),
             lp:         LetterPool::new(),
-            wp:         WordPool::new(filepath),
+            wp:         WordPool::new(),
             currency:   STARTING_CURRENCY,
             found:      0
         }

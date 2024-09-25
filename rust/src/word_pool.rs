@@ -3,11 +3,11 @@
 extern crate rand;
 use rand::Rng;
 
+static WORD_LIST: &'static str = include_str!("../../files/mots");
 
 
 pub struct WordPool {
     word_pool: Vec<String>,
-    file_path: String,
     size:      usize
 }
 
@@ -20,7 +20,7 @@ impl WordPool {
     /// It requires a file_path to a file containing the words the player will have to find.
     /// 
     /// ```
-    ///    let wp: WordPool = WordPool::new(FILEPATH);
+    ///    let wp: WordPool = WordPool::new();
     ///
     ///    assert_eq!(wp.word_pool.contains(&"ZONES".to_string()), true);
     ///    assert_eq!(wp.word_pool.contains(&"ZOO-LOGIE".to_string()), true);
@@ -28,9 +28,8 @@ impl WordPool {
     ///    assert_eq!(wp.word_pool.contains(&"ZYGOTE".to_string()), true);
     ///
     /// ```
-    pub fn new(filepath: String) -> WordPool{
+    pub fn new() -> WordPool{
         WordPool{
-            file_path: filepath,
             word_pool: Vec::new(),
             size: 0
         }
@@ -39,13 +38,7 @@ impl WordPool {
 
     /// Opens and reads the file containing the words into a vector of strings
     pub fn load_word_pool(self: &mut Self) {
-        use std::fs;
-
-        let err_msg = format!("file {} wasn't found", self.file_path);
-        let contents = fs::read_to_string(self.file_path.clone())
-            .expect(&err_msg);
-
-        self.word_pool = contents.split_whitespace().map(str::to_string).collect();
+        self.word_pool = WORD_LIST.split_whitespace().map(str::to_string).collect();
 
         self.size = self.word_pool.len();
     }
@@ -62,7 +55,7 @@ impl WordPool {
     /// ```
     ///    const WORD_LIST: [&str; 4] = ["ZONES", "ZOO-LOGIE", "ZOZOTER", "ZYGOTE"];
     ///
-    ///    let mut wp: WordPool = WordPool::new(FILEPATH.to_string());
+    ///    let mut wp: WordPool = WordPool::new();
     ///
     ///    for _ in 0..wp.size {
     ///        assert_eq!(WORD_LIST.contains(&wp.get_word().as_str()), true);
@@ -90,7 +83,7 @@ impl WordPool {
     ///
     /// # Example
     /// ```
-    ///    let mut wp: WordPool = WordPool::new(FILEPATH);
+    ///    let mut wp: WordPool = WordPool::new();
     ///
     ///    let wl = WORD_LIST.len(); 
     ///    let wp_size = wp.word_pool.len();
@@ -114,11 +107,9 @@ impl WordPool {
 mod tests {
     use super::WordPool;
 
-    const FILEPATH: &str = "../files/test";
-
     #[test]
     fn test_new() {
-        let wp: WordPool = WordPool::new(FILEPATH.to_string());
+        let wp: WordPool = WordPool::new();
 
         assert_eq!(wp.word_pool.len(), 0);
     }
@@ -126,7 +117,7 @@ mod tests {
 
     #[test]
     fn test_is_empty() {
-        let mut wp: WordPool = WordPool::new(FILEPATH.to_string());
+        let mut wp: WordPool = WordPool::new();
 
         assert_eq!(wp.is_empty(), true);
         wp.load_word_pool();
@@ -137,9 +128,9 @@ mod tests {
 
     #[test]
     fn test_get_word() {
-        const WORD_LIST: [&str; 4] = ["ZONES", "ZOO-LOGIE", "ZOZOTER", "ZYGOTE"];
+        use super::WORD_LIST;
 
-        let mut wp: WordPool = WordPool::new(FILEPATH.to_string());
+        let mut wp: WordPool = WordPool::new();
 
         for _ in 0..wp.size {
             assert_eq!(WORD_LIST.contains(&wp.get_word().as_str()), true);
