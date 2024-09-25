@@ -50,6 +50,7 @@ impl Game {
                     self.found += 1;
                     // Checking if the winning condition has been met
                     if self.game_won() { 
+                        println!("\nCongratulation ! You won !");
                         break 'main_loop;
                     }
 
@@ -69,7 +70,7 @@ impl Game {
                 let input = self.ask_for_user_input();
 
                 // checking if the player wants to quit the game
-                if input == QUIT_GAME { break 'main_loop; }
+                if input == QUIT_GAME { std::process::exit(0) }
 
                 // checking if the letter is available
                 let letter: char = input.chars().nth(0).unwrap();
@@ -100,7 +101,7 @@ impl Game {
 
     ///Displays the game to the player
     pub fn display_game(self: &Self) {
-        // print!("{esc}[2J{esc}[1;1H", esc = 27 as char); 
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char); 
         println!("Words found   : {}", self.found);
         println!("Currency      : {} / {} (Win the game by getting 20 or more)", self.currency, MAX_CURRENCY);
         println!("");
@@ -152,7 +153,7 @@ impl Game {
         let mut input: String;
 
         loop {
-            print!("What letter do you wish to buy (input QQ to quit the game) ? ");
+            print!("\nWhat letter do you wish to buy (input QQ to quit the game) ? ");
             input = read!();
             input = input.to_uppercase();
 
