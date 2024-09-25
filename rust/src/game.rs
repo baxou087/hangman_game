@@ -106,7 +106,7 @@ impl Game {
         println!("Currency      : {} / {} (Win the game by getting 20 or more)", self.currency, MAX_CURRENCY);
         println!("");
         println!("Word to find  : {}", self.display_word());
-        println!("Word to find  : {}", self.word);
+        // println!("Word to find  : {}", self.word);
         println!("");
         println!("Bought        : {}", LetterPool::display_letter_pool(self.lp.bought()));
         println!("Available     : {}", LetterPool::display_letter_pool(self.lp.available()));
