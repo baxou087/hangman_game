@@ -1,7 +1,14 @@
 use crate::{letter_pool::LetterPool, word_pool::WordPool};
+use text_io::read;
 
 const STARTING_CURRENCY:    u32  = 4;
 const MAX_CURRENCY:         u32  = 20;
+const FIRST_TIER:           u32  = 10;
+const SECOND_TIER:          u32  = 15;
+const ONE:                  u32  = 1;
+const TWO:                  u32  = 2;
+const THREE:                u32  = 3;
+
 
 const QUIT_GAME:            &str = "QQ";
 
@@ -38,8 +45,23 @@ impl Game {
             // ask the player to input a letter and check if the letter has been bought.
             // if not loop until the player enters a letter that can be bought
             loop {
-                // checking if the letter has been found
+                // checking if the word has been found
                 if self.has_been_found() {
+                    self.found += 1;
+                    // Checking if the winning condition has been met
+                    if self.game_won() { 
+                        break 'main_loop;
+                    }
+
+                    // preparing the next word
+                    self.word = self.wp.get_word();
+                    self.lp = LetterPool::new();
+                    self.display_game();
+                }
+
+                // checking if the player lost the game (no currency left)
+                if self.lose_condition() {
+                    self.game_over_display();
                     break 'main_loop;
                 }
 
@@ -53,8 +75,21 @@ impl Game {
                 let letter: char = input.chars().nth(0).unwrap();
                 if self.lp.is_letter_available(letter) {
                     self.lp.buy_letter(letter);
+
+                    // checking if the letter is in the word
+                    // and calculating the new currency value
+                    if self.is_in_word(letter) {
+                        self.currency += 1;
+                    } else {
+                        match self.currency {
+                            0..FIRST_TIER           => self.currency -= ONE,
+                            FIRST_TIER..SECOND_TIER => self.currency -= TWO,
+                            _                       => self.currency -= THREE
+                        }
+                    }
                     break;
                 }
+
             }
 
 
@@ -74,6 +109,15 @@ impl Game {
         println!("");
         println!("Bought        : {}", LetterPool::display_letter_pool(self.lp.bought()));
         println!("Available     : {}", LetterPool::display_letter_pool(self.lp.available()));
+    }
+
+
+    pub fn game_over_display(&self) {
+        println!("\nGame Over !");
+        println!("The word you were looking for was : \"{}\"", self.word);
+        println!("\nPress enter to continue");
+        let mut buffer = String::new();
+        let _ = std::io::stdin().read_line(&mut buffer);
     }
 
 
@@ -105,8 +149,6 @@ impl Game {
     /// If the player inputs anything else, then the game will loop until a valid
     /// input is passed
     pub fn ask_for_user_input(&self) -> String {
-        use text_io::read;
-
         let mut input: String;
 
         loop {
@@ -119,7 +161,7 @@ impl Game {
                 break;
             }
 
-            // valid input from the player
+            // valid input condition
             let valid_input: bool = input.len() == 1 &&
                             (input.chars().nth(0).unwrap() >= 'A' &&
                              input.chars().nth(0).unwrap() <= 'Z');
@@ -134,7 +176,7 @@ impl Game {
 
 
 
-    /// Checks if the word has been found by the player
+    /// Checks if the word has been found by the player.
     pub fn has_been_found(&self) -> bool {
         let bought_letters = self.lp.bought();
 
@@ -144,6 +186,29 @@ impl Game {
         wrd.chars().all(|c| bought_letters.contains(&c))
     }
 
+
+    /// Checks if the player has won the game.
+    ///
+    /// The only way for the player to win a game is to have
+    /// currency equal to MAX_CURRENCY or more
+    pub fn game_won(&self) -> bool {
+        self.currency >= MAX_CURRENCY
+    }
+
+
+    /// Checks if the player has lost the game.
+    ///
+    /// The only way for the player to lose a game is to have
+    /// no currency left.
+    pub fn lose_condition(&self) -> bool {
+        self.currency <= 0
+    }
+
+
+    /// Checks if the letter is in the word the player must guess
+    pub fn is_in_word(&self, letter: char) -> bool {
+        self.word.contains(letter)
+    }
 
 
 }
